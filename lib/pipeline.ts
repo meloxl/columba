@@ -18,7 +18,7 @@ export interface ColumbaCfnPipelineProps {
     directory: string;
 }
 
-export class GpayCfnPipeline extends cdk.Construct {
+export class ColumbaCfnPipeline extends cdk.Construct {
     public readonly pipeline: codepipeline.Pipeline;
 
     public readonly sourceAction: actions.SourceAction
