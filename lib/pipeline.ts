@@ -36,7 +36,7 @@ export class ColumbaCfnPipeline extends cdk.Construct {
             .addActions("ecr:DescribeImages"));
 
         // Source
-        const githubAccessToken = new cdk.SecretParameter(this, 'GitHubToken', { ssmParameter: 'GitHubToken' });
+        const githubAccessToken = new cdk.SecretParameter(this, 'GitHubToken1', { ssmParameter: 'GitHubToken1' });
         const sourceStage = pipeline.addStage({
             name: 'Source',
           });

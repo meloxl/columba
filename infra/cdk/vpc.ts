@@ -98,13 +98,21 @@ export class RDS extends cdk.Stack {
     // });
 
     //new rds
-    const rdspar = new rds.CfnDBClusterParameterGroup(this, 'rdspg', {
+    const dbclsterpar = new rds.CfnDBClusterParameterGroup(this, 'rdspg', {
       description: 'columba-prod-rds',
       family: 'aurora5.6',
       parameters: {
         'binlog_checksum': 'none',
         'binlog_format': 'row' 
       },
+    })
+
+    const dbpar = new rds.CfnDBParameterGroup(this, 'dbpg', {
+      description: 'columba-prod-rds',
+      family: '',
+      parameters: {
+        'log_bin_trust_function_creators' : '1',
+      }
     })
 
     const rdssubnet = new rds.CfnDBSubnetGroup(this, 'rdssubnet', {
@@ -116,11 +124,11 @@ export class RDS extends cdk.Stack {
     })
 
 
-    new rds.CfnDBCluster(this, 'columbards', {
+    const dbcluster = new rds.CfnDBCluster(this, 'columbards', {
       engine: 'aurora',
       availabilityZones: vpc.availabilityZones,
       databaseName: 'columba',
-      dbClusterParameterGroupName: rdspar.dbClusterParameterGroupName,
+      dbClusterParameterGroupName: dbclsterpar.dbClusterParameterGroupName,
       dbSubnetGroupName: rdssubnet.dbSubnetGroupName,
       // engineMode: 'provisioned',
       engineVersion: '5.6.10a',
@@ -136,6 +144,10 @@ export class RDS extends cdk.Stack {
     new rds.CfnDBInstance(this, 'rdsinstance', {
       dbInstanceClass: 'db.t2.small',
       dbName: 'columba-prod-1',
+      engine: 'aurora',
+      dbClusterIdentifier: dbcluster.dbClusterEndpointAddress,
+      dbParameterGroupName: dbpar.dbParameterGroupName,
+      dbSubnetGroupName: rdssubnet.dbSubnetGroupName,
     })
   
 //     //new redis
