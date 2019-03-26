@@ -43,7 +43,7 @@ export class ColumbaCfnPipeline extends cdk.Construct {
         const sourceAction = new codepipeline.GitHubSourceAction({
             actionName: 'GitHub_Source',
             owner: 'meloxl',
-            repo: 'gpay',
+            repo: 'columba',
             branch: 'master', // default: 'master'
             oauthToken: githubAccessToken.value,
             outputArtifactName: 'SourceOutput', // this will be the name of the output artifact in the Pipeline
