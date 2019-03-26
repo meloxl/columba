@@ -153,7 +153,7 @@ export class RDS extends cdk.Stack {
 /////////////////////////////
     //add solo db instance
 
-    const dbmysqlpar = new rds.CfnDBParameterGroup(this, 'dbpg', {
+    const dbmysqlpar = new rds.CfnDBParameterGroup(this, 'dbmysqlpg', {
       description: 'columba-prod-rds',
       family: 'mysql5.6',
       parameters: {
