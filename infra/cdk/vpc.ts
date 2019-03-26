@@ -122,7 +122,7 @@ export class RDS extends cdk.Stack {
       databaseName: 'columba',
       dbClusterParameterGroupName: rdspar.dbClusterParameterGroupName,
       dbSubnetGroupName: rdssubnet.dbSubnetGroupName,
-      engineMode: 'provisioned',
+      // engineMode: 'provisioned',
       engineVersion: '5.6.10a',
       masterUsername: 'root',
       masterUserPassword: 'Mbifun365',
