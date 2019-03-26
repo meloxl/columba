@@ -67,7 +67,7 @@ export class RDS extends cdk.Stack {
     inelb_sg.addIngressRule(new ec2.CidrIPv4('10.0.0.0/16'), new ec2.TcpPort(80), 'allows internal ELB traffic');    
 
     //add new RDS sg
-    const rds_sg = new ec2.SecurityGroup(this, 'columbards', {
+    const rds_sg = new ec2.SecurityGroup(this, 'columbasg', {
       vpc,
       description: 'RDS security group',
       allowAllOutbound: true   // Can be set to false
