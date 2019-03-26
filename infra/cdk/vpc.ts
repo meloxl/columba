@@ -145,7 +145,7 @@ export class RDS extends cdk.Stack {
       dbInstanceClass: 'db.t2.small',
       dbName: 'columba-prod-1',
       engine: 'aurora',
-      dbClusterIdentifier: dbcluster.dbClusterEndpointAddress,
+      dbClusterIdentifier: dbcluster.dbClusterName,
       dbParameterGroupName: dbpar.dbParameterGroupName,
       dbSubnetGroupName: rdssubnet.dbSubnetGroupName,
     })
