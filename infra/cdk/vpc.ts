@@ -152,11 +152,20 @@ export class RDS extends cdk.Stack {
 
 /////////////////////////////
     //add solo db instance
+
+    const dbmysqlpar = new rds.CfnDBParameterGroup(this, 'dbpg', {
+      description: 'columba-prod-rds',
+      family: 'mysql5.6',
+      parameters: {
+        'log_bin_trust_function_creators' : '1',
+      }
+    })
+
     new rds.CfnDBInstance(this, 'rdsdb', {
       allocatedStorage: '10',
       dbInstanceClass: 'db.t2.small',
       engine: 'mysql',
-      dbParameterGroupName: dbpar.dbParameterGroupName,
+      dbParameterGroupName: dbmysqlpar.dbParameterGroupName,
       dbSubnetGroupName: rdssubnet.dbSubnetGroupName,
       vpcSecurityGroups: [rds_sg.groupName],
       dbInstanceIdentifier: 'columba-test',
