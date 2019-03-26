@@ -1,8 +1,8 @@
 {
-  "name": "gpay",
+  "name": "columba",
   "version": "0.1.0",
   "bin": {
-    "gpay": "bin/gpay.js"
+    "columba": "bin/columba.js"
   },
   "scripts": {
     "build": "tsc",

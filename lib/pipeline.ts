@@ -5,13 +5,13 @@ import actions = require('@aws-cdk/aws-codepipeline-api');
 import cfn = require('@aws-cdk/aws-cloudformation');
 import iam = require('@aws-cdk/aws-iam');
 import cdk = require('@aws-cdk/cdk');
-// import { GpayStack } from './gpay-stack';
+
 // import { arnFromComponents } from '@aws-cdk/cdk';
 // import { CfnDHCPOptions } from '@aws-cdk/aws-ec2';
 // import { TestAction } from '@aws-cdk/aws-codepipeline-api';
 // import { CodePipelineSource } from '@aws-cdk/aws-codebuild';
 
-export interface GpayCfnPipelineProps {
+export interface ColumbaCfnPipelineProps {
     stackName: string;
     templateName: string;
     pipelineName: string;
@@ -23,11 +23,11 @@ export class GpayCfnPipeline extends cdk.Construct {
 
     public readonly sourceAction: actions.SourceAction
 
-    constructor(scope: cdk.Construct, name: string, props: GpayCfnPipelineProps) {
+    constructor(scope: cdk.Construct, name: string, props: ColumbaCfnPipelineProps) {
         super(scope, name);
 
         const pipeline = new codepipeline.Pipeline(this, 'Pipeline', {
-            pipelineName: 'gpay-' + props.pipelineName,
+            pipelineName: 'columba-' + props.pipelineName,
         });
         this.pipeline = pipeline;
 
@@ -43,7 +43,7 @@ export class GpayCfnPipeline extends cdk.Construct {
         const sourceAction = new codepipeline.GitHubSourceAction({
             actionName: 'GitHub_Source',
             owner: 'meloxl',
-            repo: 'gpay',
+            repo: 'Columba',
             branch: 'master', // default: 'master'
             oauthToken: githubAccessToken.value,
             outputArtifactName: 'SourceOutput', // this will be the name of the output artifact in the Pipeline
@@ -67,7 +67,7 @@ export class GpayCfnPipeline extends cdk.Construct {
         const buildProject = new codebuild.Project(this, 'BuildProject', {
             source: new codebuild.GitHubSource({
                 owner: 'meloxl',
-                repo: 'gpay',
+                repo: 'Columba',
                 oauthToken: githubAccessToken.value
             }),
             buildSpec: props.directory + '/buildspec.yml',
@@ -116,7 +116,7 @@ export class GpayCfnPipeline extends cdk.Construct {
         //     .addResource(cdk.ArnComponents(
         //         service: 'cloudformation',
         //         resource: 'stack',
-        //         resourceName: 'Gpay*'
+        //         resourceName: 'Columba*'
         //     )));
   
         buildProject.addToRolePolicy(new iam.PolicyStatement()
@@ -132,7 +132,7 @@ export class GpayCfnPipeline extends cdk.Construct {
     //     .addResource(cdk.arnFromComponents({
     //             service: 'cloudformation',
     //             resource: 'stack',
-    //             resourceName: 'Gpay*'
+    //             resourceName: 'Columba*'
     //     }, GpayStack))
     // );
 
@@ -149,8 +149,8 @@ export class GpayCfnPipeline extends cdk.Construct {
         const testdStage = pipeline.addStage({
             name: 'Test',
           });
-        const templatePrefix =  'Gpay' + props.templateName;
-        const testStackName = 'Gpay' + props.stackName + 'RDS';  
+        const templatePrefix =  'Columba' + props.templateName;
+        const testStackName = 'Columba' + props.stackName + 'RDS';  
         // const templatePrefix =  props.templateName;
         // const testStackName = props.stackName;
         const changeSetName = 'StagedChangeSet';
