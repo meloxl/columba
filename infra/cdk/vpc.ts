@@ -198,7 +198,7 @@ export class RDS extends cdk.Stack {
 
 const app = new cdk.App();
 
-new RDS(app, 'GpayInfraRDS', {
+new RDS(app, 'ColumbaInfraRDS', {
   cacheNodeType: "cache.t2.micro",
   engine: "redis",
 });
