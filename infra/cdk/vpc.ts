@@ -109,7 +109,7 @@ export class RDS extends cdk.Stack {
 
     const dbpar = new rds.CfnDBParameterGroup(this, 'dbpg', {
       description: 'columba-prod-rds',
-      family: '',
+      family: 'aurora5.6',
       parameters: {
         'log_bin_trust_function_creators' : '1',
       }
