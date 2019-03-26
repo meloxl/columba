@@ -9,7 +9,7 @@ import cdk = require('@aws-cdk/cdk');
 
 interface ColumbaStackProps extends cdk.StackProps {
   cacheNodeType: string;
-  engine: string;
+  redisengine: string;
 }
 
 export class RDS extends cdk.Stack {
@@ -64,7 +64,7 @@ export class RDS extends cdk.Stack {
       description: 'Allows internal ELB traffic',
       allowAllOutbound: true   // Can be set to false
     });
-    inelb_sg.addIngressRule(new ec2.CidrIPv4('10.0.0.0/16'), new ec2.TcpPort(80), 'allows internal ELB traffic');    
+    inelb_sg.addIngressRule(new ec2.CidrIPv4('10.91.0.0/16'), new ec2.TcpPort(80), 'allows internal ELB traffic');    
 
     //add new RDS sg
     const rds_sg = new ec2.SecurityGroup(this, 'columbasg', {
@@ -72,7 +72,7 @@ export class RDS extends cdk.Stack {
       description: 'RDS security group',
       allowAllOutbound: true   // Can be set to false
     });
-    rds_sg.addIngressRule(new ec2.CidrIPv4('10.0.0.0/16'), new ec2.TcpPort(3306), 'RDS security group'); 
+    rds_sg.addIngressRule(new ec2.CidrIPv4('10.91.0.0/16'), new ec2.TcpPort(3306), 'RDS security group'); 
 
     new ec2.Connections({
       securityGroups: [rds_sg],
@@ -149,6 +149,21 @@ export class RDS extends cdk.Stack {
       dbSubnetGroupName: rdssubnet.dbSubnetGroupName,
       dbInstanceIdentifier: 'columba-prod-1',
     })
+
+/////////////////////////////
+    //add solo db instance
+    new rds.CfnDBInstance(this, 'rdsinstance', {
+      allocatedStorage: '10',
+      dbInstanceClass: 'db.t2.small',
+      engine: 'mysql',
+      dbParameterGroupName: dbpar.dbParameterGroupName,
+      dbSubnetGroupName: rdssubnet.dbSubnetGroupName,
+      vpcSecurityGroups: [rds_sg.groupName],
+      dbInstanceIdentifier: 'columba-test',
+      masterUsername: 'root',
+      masterUserPassword: 'mobifun365',
+    })
+
   
 //     //new redis
 //     const redissubnet = new elasticache.CfnSubnetGroup(this, 'redissug',{
@@ -170,7 +185,7 @@ export class RDS extends cdk.Stack {
 //       description: 'RDS security group',
 //       allowAllOutbound: true   // Can be set to false
 //     });
-//     redis_sg.addIngressRule(new ec2.CidrIPv4('10.0.0.0/16'), new ec2.TcpPort(6379), 'RDS security group');   
+//     redis_sg.addIngressRule(new ec2.CidrIPv4('10.91.0.0/16'), new ec2.TcpPort(6379), 'RDS security group');   
 
 //     new ec2.Connections({
 //       securityGroups: [redis_sg],
@@ -179,7 +194,7 @@ export class RDS extends cdk.Stack {
 
 //     new elasticache.CfnCacheCluster(this, 'ColumbaRedis',{
 //       cacheNodeType: props.cacheNodeType ,     //'cache.t2.micro',
-//       engine: props.engine ,      //'redis',
+//       engine: props.redisengine ,      //'redis',
 //       numCacheNodes: 1,
 //       clusterName: "columbaredis",
 //       engineVersion: "4.0.10",
@@ -217,7 +232,7 @@ const app = new cdk.App();
 
 new RDS(app, 'ColumbaInfraRDS', {
   cacheNodeType: "cache.t2.micro",
-  engine: "redis",
+  redisengine: "redis",
 });
 
 app.run();
