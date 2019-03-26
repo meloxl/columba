@@ -117,7 +117,7 @@ export class RDS extends cdk.Stack {
 
 
     new rds.CfnDBCluster(this, 'columbards', {
-      engine: 'default.aurora5.6',
+      engine: 'aurora.mysql',
       availabilityZones: vpc.availabilityZones,
       databaseName: 'columba',
       dbClusterParameterGroupName: rdspar.dbClusterParameterGroupName,
