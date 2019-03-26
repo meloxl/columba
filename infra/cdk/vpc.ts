@@ -132,6 +132,11 @@ export class RDS extends cdk.Stack {
       ],
     
     })
+
+    new rds.CfnDBInstance(this, 'rdsinstance', {
+      dbInstanceClass: 'db.t2.small',
+      dbName: 'columba-prod-1',
+    })
   
 //     //new redis
 //     const redissubnet = new elasticache.CfnSubnetGroup(this, 'redissug',{
