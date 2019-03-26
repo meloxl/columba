@@ -143,11 +143,11 @@ export class RDS extends cdk.Stack {
 
     new rds.CfnDBInstance(this, 'rdsinstance', {
       dbInstanceClass: 'db.t2.small',
-      dbName: 'columba-prod-1',
       engine: 'aurora',
       dbClusterIdentifier: dbcluster.dbClusterName,
       dbParameterGroupName: dbpar.dbParameterGroupName,
       dbSubnetGroupName: rdssubnet.dbSubnetGroupName,
+      dbInstanceIdentifier: 'columba-prod-1',
     })
   
 //     //new redis
