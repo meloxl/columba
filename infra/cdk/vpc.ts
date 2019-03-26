@@ -152,7 +152,7 @@ export class RDS extends cdk.Stack {
 
 /////////////////////////////
     //add solo db instance
-    new rds.CfnDBInstance(this, 'rdsinstance', {
+    new rds.CfnDBInstance(this, 'rdsdb', {
       allocatedStorage: '10',
       dbInstanceClass: 'db.t2.small',
       engine: 'mysql',
