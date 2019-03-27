@@ -1,5 +1,6 @@
 import cdk = require('@aws-cdk/cdk');
 import { ColumbaCfnPipeline } from './pipeline';
+import { ColumbaImagePipeline } from './web-image-pipeline';
 
 
 export class ColumbaStack extends cdk.Stack {
@@ -13,5 +14,12 @@ export class ColumbaStack extends cdk.Stack {
       templateName: 'Infra',
       directory: 'infra/cdk'
     });
+
+    new ColumbaImagePipeline(this, 'ColumbaImagePipeline', {
+      pipelineName: 'columba-image',
+      githubOwner: 'meloxl',
+      githubRepo: 'docker-python-simplehttpserver',
+      githubBrance: 'dev' 
+    })
   }
 }
