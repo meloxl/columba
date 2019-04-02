@@ -138,7 +138,7 @@ export class ColumbaCfnPipelineInfra extends cdk.Construct {
         const testdStage = pipeline.addStage({
             name: props.stage,
           });
-        // const templatePrefix =  'Columba' + props.stackName;
+        const templatePrefix =  'Columba' + props.stackName;
         const infraStackName = 'Columba' + props.stackName + props.stage;  
         // const templatePrefix =  props.templateName;
         // const testStackName = props.stackName;
@@ -147,7 +147,7 @@ export class ColumbaCfnPipelineInfra extends cdk.Construct {
         testdStage.addAction(new cfn.PipelineCreateReplaceChangeSetAction({
             stackName: infraStackName,
             changeSetName,
-            templatePath: buildAction.outputArtifact.atPath(infraStackName + 'aaa.template.yaml'),
+            templatePath: buildAction.outputArtifact.atPath(templatePrefix + 'Prod.template.yaml'),
             adminPermissions: true,
             actionName: 'CreateReplaceChangeSetAction',
             runOrder: 1
