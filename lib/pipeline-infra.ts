@@ -147,7 +147,7 @@ export class ColumbaCfnPipelineInfra extends cdk.Construct {
         testdStage.addAction(new cfn.PipelineCreateReplaceChangeSetAction({
             stackName: infraStackName,
             changeSetName,
-            templatePath: buildAction.outputArtifact.atPath(infraStackName + 'template.yaml'),
+            templatePath: buildAction.outputArtifact.atPath(infraStackName + '.template.yaml'),
             adminPermissions: true,
             actionName: 'CreateReplaceChangeSetAction',
             runOrder: 1
