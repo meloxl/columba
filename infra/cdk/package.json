@@ -8,8 +8,8 @@
     "build": "tsc",
     "watch": "tsc -w",
     "cdk": "cdk",
-    "synth-infra": "cdk synth -o build --app 'node vpc.js'",
-    "deploy-infra": "cdk deploy --app 'node vpc.js'"
+    "synth-infra": "cdk synth -o build --app 'node infra.js'",
+    "deploy-infra": "cdk deploy --app 'node infra.js'"
   },
   "devDependencies": {
     "@types/node": "8.10.40",
