@@ -1,5 +1,6 @@
 import cdk = require('@aws-cdk/cdk');
-import { ColumbaCfnPipeline } from './pipeline';
+// import { ColumbaCfnPipeline } from './pipeline';
+import { ColumbaCfnPipelineInfra } from './pipeline-infra';
 // import { ColumbaImagePipeline } from './web-image-pipeline';
 import { ColumbacodeImagePipeline } from './web-image-pipeline-commit';
 
@@ -8,12 +9,19 @@ export class ColumbaStack extends cdk.Stack {
     super(scope, id, props);
 
     // The code that defines your stack goes here
-    new ColumbaCfnPipeline(this, 'Pipeline', {
-      pipelineName: 'infra',
+    // new ColumbaCfnPipeline(this, 'Pipeline', {
+    //   pipelineName: 'infra',
+    //   stackName: 'Infra',
+    //   templateName: 'Infra',
+    //   directory: 'infra/cdk'
+    // });
+
+    new ColumbaCfnPipelineInfra(this, 'PipelineProd', {
+      pipelineName: 'infra-prod',
       stackName: 'Infra',
-      templateName: 'Infra',
-      directory: 'infra/cdk'
-    });
+      directory: 'infra/cdk',
+      stage: 'Prod'
+    });    
 
     // new ColumbaImagePipeline(this, 'ColumbaImagePipeline', {
     //   pipelineName: 'columba-image',
