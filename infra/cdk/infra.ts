@@ -241,7 +241,7 @@ export class Infra extends cdk.Stack {
 
 const app = new cdk.App();
 
-new Infra(app, 'ColumbaInfra', {
+new Infra(app, 'ColumbaInfraProd', {
   cacheNodeType: "cache.t2.micro",
   redisengine: "redis",
 });
