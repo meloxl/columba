@@ -213,7 +213,7 @@ export class Infra extends cdk.Stack {
       cacheNodeType: props.cacheNodeType ,     //'cache.t2.micro',
       engine: props.redisengine ,      //'redis',
       numCacheNodes: 1,
-      clusterName: "columbaredis",
+      clusterName: "columba" + props.stage + "redis",
       engineVersion: "4.0.10",
       autoMinorVersionUpgrade: false,
       port: 6379,
