@@ -8,6 +8,12 @@ import elasticache = require('@aws-cdk/aws-elasticache');
 // import fs = require('fs');
 
 interface ColumbaStackProps extends cdk.StackProps {
+  stage: string;
+  cidr: string;
+  dbusername: string;
+  dbpassword: string;
+  dbinstance: string;
+  dbinstanceidentifier: string;
   cacheNodeType: string;
   redisengine: string;
 }
@@ -22,7 +28,7 @@ export class Infra extends cdk.Stack {
     super(scope, id, props);
 
       const vpc = new ec2.VpcNetwork(this, 'ColumbaVpc', { 
-        cidr: "10.91.0.0/16", 
+        cidr: props.cidr,     //"10.91.0.0/16", 
         maxAZs: 2 ,
         subnetConfiguration: [
             {
@@ -66,7 +72,7 @@ export class Infra extends cdk.Stack {
       description: 'Allows internal ELB traffic',
       allowAllOutbound: true   // Can be set to false
     });
-    inelb_sg.addIngressRule(new ec2.CidrIPv4('10.91.0.0/16'), new ec2.TcpPort(80), 'allows internal ELB traffic');    
+    inelb_sg.addIngressRule(new ec2.CidrIPv4(props.cidr), new ec2.TcpPort(80), 'allows internal ELB traffic');    
 
     //add new RDS sg
     const rds_sg = new ec2.SecurityGroup(this, 'columbasg', {
@@ -74,7 +80,7 @@ export class Infra extends cdk.Stack {
       description: 'RDS security group',
       allowAllOutbound: true   // Can be set to false
     });
-    rds_sg.addIngressRule(new ec2.CidrIPv4('10.91.0.0/16'), new ec2.TcpPort(3306), 'RDS security group'); 
+    rds_sg.addIngressRule(new ec2.CidrIPv4(props.cidr), new ec2.TcpPort(3306), 'RDS security group'); 
 
     new ec2.Connections({
       securityGroups: [rds_sg],
@@ -101,7 +107,7 @@ export class Infra extends cdk.Stack {
 
     //new rds
     const dbclsterpar = new rds.CfnDBClusterParameterGroup(this, 'rdspg', {
-      description: 'columba-prod-rds',
+      description: 'columba-rds cluster',
       family: 'aurora5.6',
       parameters: {
         'binlog_checksum': 'none',
@@ -110,7 +116,7 @@ export class Infra extends cdk.Stack {
     })
 
     const dbpar = new rds.CfnDBParameterGroup(this, 'dbpg', {
-      description: 'columba-prod-rds',
+      description: 'columba-rds ParameterGroup',
       family: 'aurora5.6',
       parameters: {
         'log_bin_trust_function_creators' : '1',
@@ -118,11 +124,11 @@ export class Infra extends cdk.Stack {
     })
 
     const rdssubnet = new rds.CfnDBSubnetGroup(this, 'rdssubnet', {
-      dbSubnetGroupDescription: 'columba-prod-rds',
+      dbSubnetGroupDescription: 'columba-rds SubnetGroup',
       subnetIds: vpc.privateSubnets.map(function(subnet) {
         return subnet.subnetId;
       }),
-      dbSubnetGroupName: 'columba-prod-rds',
+      dbSubnetGroupName: 'columba-' + props.stage + '-rds',
     })
 
 
@@ -134,8 +140,8 @@ export class Infra extends cdk.Stack {
       dbSubnetGroupName: rdssubnet.dbSubnetGroupName,
       // engineMode: 'provisioned',
       engineVersion: '5.6.10a',
-      masterUsername: 'root',
-      masterUserPassword: 'Mbifun365',
+      masterUsername: props.dbusername,  //'root',
+      masterUserPassword: props.dbpassword,   //'Mbifun365',
       port: 3306,
       vpcSecurityGroupIds: [
         rds_sg.groupName
@@ -144,12 +150,12 @@ export class Infra extends cdk.Stack {
     })
 
     new rds.CfnDBInstance(this, 'rdsinstance', {
-      dbInstanceClass: 'db.t2.small',
+      dbInstanceClass: props.dbinstance,    //'db.t2.small',
       engine: 'aurora',
       dbClusterIdentifier: dbcluster.dbClusterName,
       dbParameterGroupName: dbpar.dbParameterGroupName,
       dbSubnetGroupName: rdssubnet.dbSubnetGroupName,
-      dbInstanceIdentifier: 'columba-prod-1',
+      dbInstanceIdentifier: props.dbinstanceidentifier,  //'columba-prod-1',
     })
 
 /////////////////////////////
@@ -178,16 +184,16 @@ export class Infra extends cdk.Stack {
   
     //new redis
     const redissubnet = new elasticache.CfnSubnetGroup(this, 'redissug',{
-      description: 'columba-prod-redis',
+      description: 'columba-' + props.stage + '-redis',
       subnetIds: vpc.privateSubnets.map(function(subnet) {
         return subnet.subnetId;
       }),
-      cacheSubnetGroupName: "columba-prod-redis",
+      cacheSubnetGroupName: 'columba-' + props.stage + '-redis',
     })
 
     const redispar = new elasticache.CfnParameterGroup(this , 'redispg',{
       cacheParameterGroupFamily: "redis4.0",
-      description: "columba-prod-redis",
+      description: 'columba-' + props.stage + '-redis',
     })
 
     // The security group that defines network level access to the cluster
@@ -196,7 +202,7 @@ export class Infra extends cdk.Stack {
       description: 'RDS security group',
       allowAllOutbound: true   // Can be set to false
     });
-    redis_sg.addIngressRule(new ec2.CidrIPv4('10.91.0.0/16'), new ec2.TcpPort(6379), 'RDS security group');   
+    redis_sg.addIngressRule(new ec2.CidrIPv4(props.cidr), new ec2.TcpPort(6379), 'RDS security group');   
 
     new ec2.Connections({
       securityGroups: [redis_sg],
@@ -242,6 +248,23 @@ export class Infra extends cdk.Stack {
 const app = new cdk.App();
 
 new Infra(app, 'ColumbaInfraProd', {
+  stage: "prod",
+  cidr: "10.91.0.0/16",
+  dbusername: "app",
+  dbpassword: "x6oGqOMQJCw8",
+  dbinstance: "db.t2.small",
+  dbinstanceidentifier: "columba-prod-1",
+  cacheNodeType: "cache.t2.micro",
+  redisengine: "redis",
+});
+
+new Infra(app, 'ColumbaInfraStg', {
+  stage: "stg",
+  cidr: "10.92.0.0/16",
+  dbusername: "root",
+  dbpassword: "x6oGqOMQJCw8",
+  dbinstance: "db.t2.small",
+  dbinstanceidentifier: "columba-stg-1",
   cacheNodeType: "cache.t2.micro",
   redisengine: "redis",
 });

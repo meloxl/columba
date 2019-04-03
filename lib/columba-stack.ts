@@ -21,7 +21,14 @@ export class ColumbaStack extends cdk.Stack {
       stackName: 'Infra',
       directory: 'infra/cdk',
       stage: 'Prod'
-    });    
+    });   
+    
+    new ColumbaCfnPipelineInfra(this, 'PipelineStg', {
+      pipelineName: 'infra-stg',
+      stackName: 'Infra',
+      directory: 'infra/cdk',
+      stage: 'Stg'
+    });  
 
     // new ColumbaImagePipeline(this, 'ColumbaImagePipeline', {
     //   pipelineName: 'columba-image',
